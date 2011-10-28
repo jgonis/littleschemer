@@ -119,4 +119,181 @@ cons
                       (cdr ab))))))
 
 ;;;Section 2.5 Lambda Expressions
+;;;When creating a lambda expression we can have variables that are not
+;;;explicitly bound in the expression.  These are called free
+;;;variables. These free variables are bound to the environment
+;;;defined lexically, ie in the program text.  If this environment is
+;;;no-longer accessible when the procedure is executed, the bindings
+;;;will still be in effect
+;;;Example (let ((f (let ((x 'sam)) (lambda (y z) (list x y z))))) (f 'i
+;;;'am))
+;;;In this case the lambda is defined in an environment where x is bound to
+;;;the symbol 'sam, but when f is executed that environment no longer
+;;;exists and x has no binding. However f will still result in (sam i
+;;;am) because f contains the environment it was defined in and so its
+;;;x is still bound to 'sam when it is executed.  In fact even if x
+;;;does exist when it is executed, and x has a different binding in
+;;;the environment it is being executed in, it will still have the
+;;;value that x was bound to when it was defined.
+
+;;;Exercise 2.5.1 a) Predicted answer: a
+(let ((f (lambda (x) x))) (f 'a))
+;;;Exercise 2.5.1 b) Predicted answer: (a)
+(let ((f (lambda x x))) (f 'a))
+;;;Exercise 2.5.1 c) Predicted answer: a
+(let ((f (lambda (x . y) x))) (f 'a))
+;;;Exercise 2.5.1 d) Predicted answer: ()
+(let ((f (lambda (x . y) y))) (f 'a))
+
+;;;Exercise 2.5.2
+((lambda x x) '1 '2 '3 '4) 
+
+;;;Exercise 2.5.3 a) No free variables
+
+;;;Exercise 2.5.3 b) +
+
+;;;Exercise 2.5.3 c) f
+
+;;;Exercise 2.5.3 d) cons f y
+
+;;;Exercise 2.5.3 e) cons y
+
+;;;Exercise 2.5.3 f) cons z y
+
+
+;;;Top level definitions
+;;;Bindings established with let or lambda expressions are not visible
+;;;outside of the bodies of these expressions.  To create a binding
+;;;that is visible anywhere you use "define" which creates a top-level
+;;;definition.  These definitions are visible in every expression you
+;;;enter, except when they are shadowed. Top-level definitions may be
+;;;established for any object, not just procedures.
+
+(define double-any (lambda (f x) (f x x)))
+;;;Exercise 2.6.1 This will result in an infinite recursion, as it
+;;;will try to apply double-any with two arguments, which result in
+;;;calling the function double-any with those two arguments, and again
+;;;recurse, over and over.
+
+;;;Exercise 2.6.2
+(define test-compose
+  (lambda (f1 f2)
+    (lambda (arg)
+      (f1 (f2 arg)))))
+
+(define composed-cadr
+  (lambda (list-arg)
+    ((compose car cdr) list-arg)))
+
+(define composed-cddr
+  (lambda (list-arg)
+    ((compose cdr cdr) list-arg)))
+
+;;;Exercise 2.6.3
+;;;caar
+(define composed-caar
+  (lambda (list-arg)
+    ((compose car car) list-arg)))
+;;;cdar
+(define composed-cdar
+  (lambda (list-argn)
+    ((compose cdr car) list-arg)))
+;;;caaar
+(define composed-caaar
+  (lambda (list-arg)
+    ((compose car composed-caar) list-arg)))
+;;;caadr
+(define composed-caadr 
+  (lambda (list-arg)
+    ((compose car composed-cadr) list-arg)))
+;;;cadar
+(define composed-cadar
+  (lambda (list-arg)
+     ((compose car composed-cdar) list-arg)))
+;;;caddr
+(define composed-caddr
+  (lambda (list-arg)
+    ((compose car composed-cddr) list-arg)))
+;;;cdaar
+(define composed-cdaar
+  (lambda (list-arg)
+    ((compose cdr composed-caar) list-arg)))
+;;;cdadr
+(define composed-cdadr
+  (lambda (list-arg)
+    ((compose cdr composed-cadr) list-arg)))
+;;;cddar
+(define composed-cddar
+  (lambda (list-arg)
+    ((compose cdr composed-cdar) list-arg)))
+;;;cdddr
+(define composed-cdddr
+  (lambda (list-arg)
+    ((compose cdr composed-cddr) list-arg)))
+;;;caaaar
+(define composed-caaaar
+  (lambda (list-arg)
+    ((compose car composed-caaar) list-arg)))
+;;;caaadr
+(define composed-caaadr
+  (lambda (list-arg)
+    ((compose car composed-caadr) list-arg)))
+;;;caadar
+(define composed-caadar
+  (lambda (list-arg)
+    ((compose car composed-cadar) list-arg)))
+;;;caaddr
+(define composed-caaddr
+  (lambda (list-arg)
+    ((compose car composed-caddr) list-arg)))
+;;;cadaar
+(define composed-cadaar
+  (lambda (list-arg)
+    ((compose car composed-cdaar) list-arg)))
+;;;cadadr
+(define composed-cadadr
+  (lambda (list-arg)
+    ((compose car composed-cdadr) list-arg)))
+;;;caddar
+(define composed-caddar
+  (lambda (list-arg)
+    ((compose car composed-cddar) list-arg)))
+;;;cadddr
+(define composed-cadddr
+  (lambda (list-arg)
+    ((compose car composed-cdddr) list-arg)))
+;;;cdaaar
+(define composed-cdaaar
+  (lambda (list-arg)
+    ((compose cdr composed-caaar) list-arg)))
+;;;cdaadr
+(define composed-cdaadr
+  (lambda (list-arg)
+    ((compose cdr composed-caadr) list-arg)))
+;;;cdadar
+(define composed-cdadar
+  (lambda (list-arg)
+    ((compose cdr composed-cadar) list-arg)))
+;;;cdaddr
+(define composed-cdaddr
+  (lambda (list-arg)
+    ((compose cdr composed-caddr) list-arg)))
+;;;cddaar
+(define composed-cddaar
+  (lambda (list-arg)
+    ((compose cdr composed-cdaar) list-arg)))
+;;;cddadr
+(define composed-cddadr
+  (lambda (list-arg)
+    ((compose cdr composed-cdadr) list-arg)))
+;;;cdddar
+(define composed-cdddar
+  (lambda (list-arg)
+    ((compose cdr composed-cddar) list-arg)))
+;;;cddddr
+(define composed-cddddr
+  (lambda (list-arg)
+    ((compose cdr composed-cdddr) list-arg)))
+
+;;;Conditional Expressions
 
