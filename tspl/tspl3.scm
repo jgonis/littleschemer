@@ -297,3 +297,57 @@ cons
 
 ;;;Conditional Expressions
 
+;;;Exercise 2.7.1
+;;;Define the predicate atom?, which returns true if its argument is
+;;;not a pair and false if it s.
+(define atom?
+  (lambda (arg)
+    (if (pair? arg)
+        #f
+        #t)))
+
+;;;Exercise 2.7.1
+(define shorter
+  (lambda (l1 l2)
+    (let ((l1-length (length l1))
+          (l2-length (length l2)))
+      (cond ((< l1-length l2-length) l1)
+            ((> l1-length l2-length) l2)
+            (else l1)))))
+
+;;;Section 2.8 Simple Recursion
+;;;Generally recursive procedures require two basic elements, a base
+;;;case, and a recursion step. With each recursion step the idea is to
+;;;come closer to the base case so that eventually the recursion will
+;;;terminate.
+(define j-length
+  (lambda (ls)
+    (if (null? ls)
+        0
+        (+ 1 (j-length (cdr ls))))
+    ))
+
+(define j-list-copy
+  (lambda (ls)
+    (if (null? ls)
+        '()
+        (cons (car ls) (j-list-copy (cdr ls))))
+    ))
+
+(define tree-copy
+  (lambda (tr)
+    (if (not (pair? tr))
+        tr
+        (cons (tree-copy (car tr))
+              (tree-copy (cdr tr))))))
+
+;;;Exercise 2.8.1 What would happen if you reversed the order of the
+;;;arguments to cons in tree-copy?
+;;;You would end up reversing the tree, so that all right
+;;;hand-branches are copies to the left side, and vice versa.
+(define reverse-tree-copy
+  (lambda (tr)
+    (if (not (pair? tr))
+        tr
+        (cons (reverse-tree-copy (cdr tr))
+              (reverse-tree-copy (car tr))))))
