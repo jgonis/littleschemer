@@ -350,4 +350,75 @@ cons
     (if (not (pair? tr))
         tr
         (cons (reverse-tree-copy (cdr tr))
-              (reverse-tree-copy (car tr))))))
+              (reverse-tree-copy (car tr))))
+    ))
+
+;;;Exercise 2.8.2
+(define my-append
+  (lambda (list1 list2)
+    (if (null? list1)
+        list2
+        (cons (car list1) (my-append (cdr list1) list2)))
+    ))
+
+;;;Exercise 2.8.3
+(define make-list
+  (lambda (length base-element)
+    (if (<= length 0)
+        '()
+        (cons base-element (make-list (- length 1) base-element)))
+    ))
+
+;;;Exercise 2.8.4
+(define my-list-tail
+  (lambda (ls index)
+    (if (= index 0)
+        ls
+        (my-list-tail (cdr ls) (- index 1)))
+    ))
+
+(define my-list-ref
+  (lambda (ls index)
+    (if (= index 0)
+        (car ls)
+        (my-list-ref (cdr ls) (- index 1)))
+    ))
+
+;;;Exercise 2.8.5
+(define shorter?
+  (lambda (l1 l2)
+    (cond  ((and (null? l1) (not (null? l2))) #t)
+           ((and (not (null? l1)) (not (null? l2)))
+            (shorter? (cdr l1) (cdr l2)))
+           (else #f))))
+
+(define new-shorter
+  (lambda (l1 l2)
+    (cond ((shorter? l1 l2) l1)
+          ((shorter? l2 l1) l2)
+          (else l1))))
+
+;;;Exercise 2.8.6
+(define my-even?
+  (lambda (num)
+    (if (= num 0)
+        #t
+        (my-odd? (- num 1)))
+    ))
+
+(define my-odd?
+  (lambda (num)
+    (if (= num 0)
+        #f
+        (my-even? (- num 1)))
+    ))
+
+;;;Exercise 2.8.7
+;;;Use map to define a procedure transpose that takes a list of pairs
+;;;and returns a pair of lists
+(define my-transpose
+  (lambda (list-of-pairs)
+    (cons (map car list-of-pairs)
+          (map cdr list-of-pairs))))
+
+;;;Section 2.9 Assignment
