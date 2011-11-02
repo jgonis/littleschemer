@@ -422,3 +422,75 @@ cons
           (map cdr list-of-pairs))))
 
 ;;;Section 2.9 Assignment
+;;;Define a procedure for the quadratic formula that uses assignment
+;;;to calculate and store its values
+(define destructive-quadratic-formula
+  (lambda (a b c)
+    (let ((root1 0) (root2 0) (minusb 0) (radical 0) (divisor 0))
+      (set! minusb (- 0 b))
+      (set! radical (sqrt (- (* b b) (* 4 a c))))
+      (set! divisor (* 2 a))
+      (set! root1 (/ (+ minusb radical) divisor))
+      (set! root2 (/ (- minusb radical) divisor))
+      (cons root1 root2))
+    ))
+
+;;;;Define a procedure for the quadratic formula that does not use
+;;;;explicit assignment, but instead bind values when the variable is
+;;;;declared in the let expression.
+(define quadratic-formula
+  (lambda (a b c)
+    (let ((minusb (- 0 b))
+          (radical (sqrt (- (* b b) (* 4 a c))))
+          (divisor (* 2 a)))
+      (let ((root1 (/ (+ minusb radical) divisor))
+            (root2 (/ (- minusb radical) divisor)))
+        (cons root1 root2)))))
+
+(define lazy
+  (lambda (thunk)
+    (let ((val #f)  (flag #f))
+      (lambda ()
+        (if (not flag)
+            (begin (set! val (thunk))
+                   (set! flag #t)))
+        val))))
+
+(define lazy-test
+  (lazy (lambda ()
+          (display "Ouch!")
+          (newline)
+          "got me")))
+
+;;;An example showing assignment, along with a local let binding to
+;;;create a stack data structure
+(define make-stack
+  (lambda ()
+    (let ((ls '()))
+      (lambda (msg . args)
+        (cond ((eqv? msg 'empty?) (null? ls))
+              ((eqv? msg 'push!) (set! ls (cons (car args) ls)))
+              ((eqv? msg 'top) (car ls))
+              ((eqv? msg 'pop!) (set! ls (cdr ls)))
+              (else "oops"))))))
+
+;;;Another example showing assignment to create a queue data structure.
+(define make-queue
+  (lambda ()
+    (let ((end (cons 'ignored '())))
+      (cons end end))))
+
+(define putq!
+  (lambda (q v)
+    (let ((end (cons 'ignored '())))
+      (set-car! (cdr q) v)
+      (set-cdr! (cdr q) end)
+      (set-cdr! q end))))
+
+(define getq
+  (lambda (q)
+    (car (car q))))
+
+(define delq!
+  (lambda (q)
+    (set-car! q (cdr (car q)))))
