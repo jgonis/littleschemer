@@ -494,3 +494,57 @@ cons
 (define delq!
   (lambda (q)
     (set-car! q (cdr (car q)))))
+
+;;;Exercise 2.9.1
+(define make-counter
+  (lambda (initial increment)
+    (lambda ()
+      (let ((v initial))
+        (set! initial (+ initial increment))
+        v))))
+
+;;;Exercise 2.9.2
+(define case-make-stack
+  (lambda ()
+    (let ((ls '()))
+      (lambda (msg . args)
+        (case msg
+          ((empty? mt?) (null? ls))
+          ((push!) (set! ls (cons (car args) ls)))
+          ((top) (car ls))
+          ((pop!) (set! ls (cdr ls)))
+          (else "oops"))))))
+
+;;;Exercise 2.9.3
+(define extended-make-stack
+  (lambda ()
+    (let ((ls '()))
+      (lambda (msg . args)
+        (case msg
+          ((empty? mt?) (null? ls))
+          ((push!) (set! ls (cons (car args) ls)))
+          ((top) (car ls))
+          ((pop!) (set! ls (cdr ls)))
+          ((ref) (list-ref ls (car args)))
+          ((set!) (set-car! (list-tail ls (car args)) (car (cdr args))))
+          (else "oops"))))))
+
+;;;Exercise 2.9.4
+(define make-vector-stack
+  (lambda (stack-size)
+    (let ((vec (make-vector stack-size))
+          (current-index 0))
+      (lambda (msg . args)
+        (case msg
+          ((empty? mt?) (= current-index 0)) 
+          ((push!)
+           (vector-set! vec (current-index) (car args))
+           (set! current-index (+ current-index 1)))
+          ((top)
+           (vector-ref vec (- current-index 1)))
+          ((pop!)
+           (set! current-index (- current-index 1))
+           (vector-ref current-index))
+          ((ref) (vector-ref vec (car args)))
+          ((set! (vector-set! vec (car args) (car (cdr args)))))
+          (else 'oops!))))))
