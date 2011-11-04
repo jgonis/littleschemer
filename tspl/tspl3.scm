@@ -474,6 +474,26 @@ cons
               ((eqv? msg 'pop!) (set! ls (cdr ls)))
               (else "oops"))))))
 
+;;;Create tests for the various stack functions that I will be
+;;;creating, as a way of testing their accuracy
+(define stack-test
+  (lambda (stack-creation-procedure . args)
+    (let ((stack '()))
+      (if (null? args)
+          (set! stack (stack-creation-procedure))
+          (set! stack (stack-creation-procedure (car args))))
+      (assert (stack 'empty?))
+      (stack 'push! 1)
+      (assert (not (stack 'empty?)))
+      (assert (= (stack 'top) 1))
+      (stack 'push! 2)
+      (stack 'push! 3)
+      (assert (= (stack 'top) 3))
+      (stack 'pop!)
+      (assert (= (stack 'top) 2)))))
+
+(stack-test make-stack)
+
 ;;;Another example showing assignment to create a queue data structure.
 (define make-queue
   (lambda ()
@@ -515,6 +535,24 @@ cons
           ((pop!) (set! ls (cdr ls)))
           (else "oops"))))))
 
+(define case-stack-test
+  (lambda (stack-creation-procedure . args)
+    (let ((stack '()))
+      (if (null? args)
+          (set! stack (stack-creation-procedure))
+          (set! stack (stack-creation-procedure (car args))))
+      (assert (stack 'empty?))
+      (stack 'push! 1)
+      (assert (not (stack 'empty?)))
+      (assert (= (stack 'top) 1))
+      (stack 'push! 2)
+      (stack 'push! 3)
+      (assert (= (stack 'top) 3))
+      (stack 'pop!)
+      (assert (= (stack 'top) 2)))))
+
+(case-stack-test case-make-stack)
+
 ;;;Exercise 2.9.3
 (define extended-make-stack
   (lambda ()
@@ -529,6 +567,28 @@ cons
           ((set!) (set-car! (list-tail ls (car args)) (car (cdr args))))
           (else "oops"))))))
 
+(define extended-stack-test
+  (lambda (stack-creation-procedure . args)
+    (let ((stack '()))
+      (if (null? args)
+          (set! stack (stack-creation-procedure))
+          (set! stack (stack-creation-procedure (car args))))
+      (assert (stack 'empty?))
+      (stack 'push! 1)
+      (assert (not (stack 'empty?)))
+      (assert (= (stack 'top) 1))
+      (stack 'push! 2)
+      (stack 'push! 3)
+      (assert (= (stack 'top) 3))
+      (assert (= (stack 'ref 0) 3))
+      (stack 'set! 0 4)
+      (assert (= (stack 'top) 4))
+      (assert (= (stack 'top) (stack 'ref 0)))
+      (stack 'pop!)
+      (assert (= (stack 'top) 2)))))
+
+(extended-stack-test extended-make-stack)
+
 ;;;Exercise 2.9.4
 (define make-vector-stack
   (lambda (stack-size)
@@ -538,13 +598,125 @@ cons
         (case msg
           ((empty? mt?) (= current-index 0)) 
           ((push!)
-           (vector-set! vec (current-index) (car args))
+           (vector-set! vec current-index (car args))
            (set! current-index (+ current-index 1)))
           ((top)
            (vector-ref vec (- current-index 1)))
           ((pop!)
            (set! current-index (- current-index 1))
-           (vector-ref current-index))
-          ((ref) (vector-ref vec (car args)))
-          ((set! (vector-set! vec (car args) (car (cdr args)))))
+           (vector-ref vec current-index))
+          ((ref) (vector-ref vec  (- current-index  (+ (car args) 1))))
+          ((set!) (vector-set! vec
+                               (- current-index (+ (car args) 1))
+                               (car (cdr args))))
           (else 'oops!))))))
+
+(extended-stack-test make-vector-stack 10)
+
+;;;Exercise 2.9.5
+(define emptyq?
+  (lambda (q)
+    (eqv? (car q) (cdr q))))
+
+(define checked-getq
+  (lambda (q)
+    (if (emptyq? q)
+        (error "The queue is empty and so there is nothing to get")
+        (car (car q)))))
+
+(define checked-delq!
+  (lambda (q)
+    (if (emptyq? q)
+        (error "The queue is empty so there is nothing to delete")
+        (set-car! q (cdr (car q))))))
+
+;;;putq! getq delq! emptyq?
+(define queue-test
+  (lambda (queue-creation-function queue-put queue-get queue-delete queue-empty)
+    (let ((q (queue-creation-function)))
+      (assert (queue-empty q))
+      (queue-put q 1)
+      (assert (not (queue-empty q)))
+      (queue-put q 2)
+      (queue-put q 3)
+      (assert (= (queue-get q) 1))
+      (queue-delete q)
+      (assert (= (queue-get q) 2))
+      (queue-delete q)
+      (assert (= (queue-get q) 3))
+      (queue-delete q)
+      (assert (queue-empty q))
+      (queue-put q 'a)
+      (queue-put q 'b)
+      (assert (eq? (queue-get q) 'a))
+      (queue-delete q)
+      (assert (eq? (queue-get q) 'b))
+      (queue-delete q)
+      (queue-put q 'c)
+      (queue-put q 'd)
+      (assert (eq? (queue-get q) 'c))
+      (queue-delete q)
+      (assert (eq? (queue-get q) 'd)))))
+
+(queue-test make-queue putq! getq delq! emptyq?)
+(queue-test make-queue putq! checked-getq checked-delq! emptyq?)
+
+;;;Exercise 2.9.6
+(define new-make-queue
+  (lambda ()
+    (let ((element (cons '() '())))
+      (cons element element))))
+
+(define new-emptyq?
+  (lambda (q)
+    (and (null?  (car (car q))) (null? (car (cdr q))))))
+
+(define new-putq!
+  (lambda (q v)
+    (if (new-emptyq? q)
+        (set-car! (cdr q) v)
+        (let ((element (cons v '())))
+          (set-cdr! (cdr q) element)
+          (set-cdr! q element)))))
+
+(define new-getq
+  (lambda (q)
+    (car (car q))))
+
+(define new-delq!
+  (lambda (q)
+    (if (null? (cdr (car q)))
+        (let ((element (cons '() '())))
+          (set-car! q element)
+          (set-cdr! q element))
+        (set-car! q (cdr (car q))))))
+
+(queue-test new-make-queue new-putq! new-getq new-delq! new-emptyq?)
+
+;;;Exercise 2.9.7
+;;;In guile scheme the built in length function rejects the circular
+;;;list. My implementation of length would give an infinite loop as it
+;;;forever tries to find the empty list '() that would signal the end
+;;;of the list.
+
+;;;Exercise 2.9.8
+;;;In guile scheme the built in list predicate returns #f when given a
+;;;circular list.
+(define my-list?
+  (lambda (ls)
+    (cond ((null? ls) #t)
+          ((not (pair? ls)) #f)
+          ((null? (cdr ls)) #t)
+          ((not (pair? (cdr ls))) #f)
+          (else (my-list? (cdr ls))))))
+
+(define test-my-list?
+  (lambda ()
+    (assert (my-list? '()))
+    (assert (not (my-list? '(a . b))))
+    (assert (my-list? '(1 2 3)))
+    (assert (not (my-list? '(a b . c))))
+    (assert (not (my-list? 'a)))
+    (assert (not (my-list? 1)))))
+
+(test-my-list?)
