@@ -474,6 +474,9 @@ cons
               ((eqv? msg 'pop!) (set! ls (cdr ls)))
               (else "oops"))))))
 
+;;Import the assert module so that I can check assertions in my unit
+;;tests
+(use-modules (debugging-assert))
 ;;;Create tests for the various stack functions that I will be
 ;;;creating, as a way of testing their accuracy
 (define stack-test
