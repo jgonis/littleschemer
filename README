@@ -1,4 +1,1 @@
-There isn't really anything to say here, except that this is a
-collection of my work in scheme as I work through a couple of books to
-try and learn the language more thoroughly.  I am using recent
-versions of Guile scheme as my development environment.
+There isn't really anything to say here, except that this is a collection of my work in scheme as I work through a couple of books to try and learn the language more thoroughly.  I am using recent versions of Guile scheme as my development environment, specifically 2.0.5. I previously used Ypsilon scheme as my development environment and so I am still in the process of converting my code to run in guile, so there may be some files that do not run properly in guile yet.  I will continue to fix up these files as I go.
