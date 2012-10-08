@@ -88,8 +88,8 @@ cons
 (cons (cons 'a 'b) (cons (cons (cons 'c '()) (cons 'd '())) (cons '() '())))
 
 ;;;Exercise 2.4.1 a) (+ (- (* 3 a) b) (+ (* 3 a) b))
-(let ((a (* 3 a)))
-  (+ (- a b) (+ a b)))
+;;(let ((a (* 3 a)))
+  ;;(+ (- a b) (+ a b)))
 
 ;;;Exercise 2.4.1 b) (cons (car (list a b c)) (cdr (list a b c)))
 (let ((list (list 'a 'b 'c)))
