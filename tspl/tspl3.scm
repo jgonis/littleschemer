@@ -196,7 +196,7 @@ cons
     ((compose car car) list-arg)))
 ;;;cdar
 (define composed-cdar
-  (lambda (list-argn)
+  (lambda (list-arg)
     ((compose cdr car) list-arg)))
 ;;;caaar
 (define composed-caaar
