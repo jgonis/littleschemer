@@ -723,3 +723,9 @@ cons
     (assert (not (my-list? 1)))))
 
 (test-my-list?)
+
+(define circular-list
+  (let ((ls (list 'a 'b 'c)))
+    (set-cdr! (cdr (cdr ls)) ls)
+    ls))
+
