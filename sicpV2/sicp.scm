@@ -165,3 +165,88 @@
                  (pascal-triangle (- row 1) column)))))
 
 ;;Ex 1.13
+
+
+;;;;;;;;;;;;;;;;;;;;;; CHAPTER 2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (add-rat x y)
+  (reduced-make-rat (+ (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
+
+(define (sub-rat x y)
+  (reduced-make-rat (- (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
+
+(define (mul-rat x y)
+  (reduced-make-rat (* (numer x) (numer y))
+            (* (denom x) (denom y))))
+
+(define (div-rat x y)
+  (reduced-make-rat (* (numer x) (denom y))
+            (* (denom x) (numer y))))
+
+(define (equal-rat? x y)
+  (= (* (numer x) (denom y))
+     (* (numer y) (denom x))))
+
+(define (make-rat n d)
+  (cons n d))
+
+(define (numer x)
+  (car x))
+
+(define (denom x)
+  (cdr x))
+
+(define (print-rat x)
+  (display (numer x))
+  (display "/")
+  (display (denom x))
+  (newline))
+
+(define (reduced-make-rat n d)
+  (let ((g (gcd n d)))
+    (cons (/ n g) (/ d g))))
+
+;;Ex 2.1
+(define (improved-reduced-make-rat n d)
+  (let ((g (gcd n d)))
+    (cond ((< d 0) (cons (/ (* n -1) g)
+                         (/ (* d -1) g)))
+          (else (cons (/ n g)
+                      (/ d g))))))
+;;Ex 2.2
+(define (make-segment start end)
+  (cons start end))
+
+(define (start-segment segment)
+  (car segment))
+
+(define (end-segment segment)
+  (cdr segment))
+
+(define (make-point x y)
+  (cons x y))
+
+(define (x-point point)
+  (car point))
+
+(define (y-point point)
+  (cdr point))
+
+(define (print-point point)
+  (display "(")
+  (display (x-point point))
+  (display ", ")
+  (display (y-point point))
+  (display ")")
+  (newline))
+
+(define (midpoint-segment segment)
+  (make-point (average (x-point (start-segment segment))
+                       (x-point (end-segment segment)))
+              (average (y-point (start-segment segment))
+                       (y-point (end-segment segment)))))
+
+
