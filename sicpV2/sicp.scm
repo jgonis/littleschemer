@@ -249,4 +249,37 @@
               (average (y-point (start-segment segment))
                        (y-point (end-segment segment)))))
 
+;;Ex 2.3
+(define (make-rect bottom-left top-right)
+  (cons bottom-left top-right))
+
+(define (bottom-left rect)
+  (car rect))
+
+(define (top-right rect)
+  (cdr rect))
+
+(define (rect-perimeter rect)
+  (+ (* 2 (- (x-point (top-right rect)) (x-point (bottom-left rect))))
+     (* 2 (- (y-point (top-right rect)) (y-point (bottom-left rect))))))
+
+(define (rect-area rect)
+  (* (- (y-point (top-right rect)) (y-point (bottom-left rect)))
+     (- (x-point (top-right rect)) (x-point (bottom-left rect)))))
+
+(define (alt-make-rect bottom-left width height)
+  (cons bottom-left (cons width height)))
+
+(define (alt-bottom-left rect)
+  (car rect))
+
+(define (rect-height rect)
+   (cdr (cdr rect)))
+
+(define (rect-width rect)
+  (car (cdr rect)))
+
+(define (alt-top-right rect)
+  (make-point (+ (rect-width rect) (x-point (bottom-left rect)))
+              (+ (rect-height rect) (y-point (bottom-left rect)))))
 
