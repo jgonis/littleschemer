@@ -91,7 +91,77 @@
   (define (factorial-iterator product counter)
     (if (> counter n)
         product
-        (factorial-iterator (* product counter) (+ counter 1))))
+        (factorial-iterator (* product counter)
+                            (+ counter 1))))
   (factorial-iterator 1 1))
 
+;;Exercise 1.9
+;;The first procedure is defined recursively, because we keep passing
+;;the result of a recursive call to the + procedure to the inc
+;;procedure, meaning that we are "deferring" the inc operation, and
+;;thus we will have to keep these records on the stack.
 
+;;The second function is iterative, because the state of the procedure
+;;is captured in the two parameters a and b, which is modified before
+;;each recursive call.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Section 1.2.2 ;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (fib n)
+  (cond ((= n 0) 0)
+        ((= n 1) 1)
+        (else (+ (fib (- n 1))
+                 (fib (- n 2))))))
+
+(define (iterative-fib n)
+  (define (fib-iter a b count)
+    (if (= count 0)
+        b
+        (fib-iter (+ a b) a (- count 1))))
+  (fib-iter 1 0 n))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;; Example ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;Counting change
+;;Number of ways to count change =
+;;1) number of ways to count change using all but the first type of
+;;coin.
+;;2) number of ways to count a-d amount of change using all n coins,
+;;where d is the denomination of the first kind of coin.
+
+(define (count-change amount)
+  (define (first-denomination n)
+    (cond ((= n 1) 1)
+          ((= n 2) 5)
+          ((= n 3) 10)
+          ((= n 4) 25)
+          ((= n 5) 50)))
+  (define (cc amount num-denominations)
+    (cond ((= amount 0) 1)
+          ((< amount 0) 0)
+          ((= num-denominations 0) 0)
+          (else (+ (cc amount (- num-denominations 1))
+                   (cc (- amount (first-denomination num-denominations))
+                       num-denominations)))))
+  (cc amount 5))
+
+;;Exercise 1.11
+(define (ex111 n)
+  (cond ((< n 3) n)
+        (else (+ (ex111 (- n 1))
+                 (* 2 (ex111 (- n 2)))
+                 (* 3 (ex111 (- n 3)))))))
+
+(define (ex111-iterative n)
+  (define (ex111-iter a b c count)
+    (cond ((= count 0) a)
+          (else (ex111-iter b c (+ c (* 2 b) (* 3 a)) (- count 1)))))
+  (ex111-iter 0 1 2 n))
+
+;;Ex 1.12
+(define (pascal-triangle row column)
+  (cond ((and (= row 1) (= column 1)) 1)
+        ((< column 1) 0)
+        ((> column row) 0)
+        (else (+ (pascal-triangle (- row 1) (- column 1))
+                 (pascal-triangle (- row 1) column)))))
+
+;;Ex 1.13
