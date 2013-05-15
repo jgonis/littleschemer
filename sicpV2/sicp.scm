@@ -283,3 +283,4 @@
   (make-point (+ (rect-width rect) (x-point (bottom-left rect)))
               (+ (rect-height rect) (y-point (bottom-left rect)))))
 
+
