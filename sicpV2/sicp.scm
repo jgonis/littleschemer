@@ -164,8 +164,69 @@
         (else (+ (pascal-triangle (- row 1) (- column 1))
                  (pascal-triangle (- row 1) column)))))
 
-;;Ex 1.13
+;;Section 1.2.4 Exponentiation
+(define (j-expt b n)
+  (if (= n 0)
+      1
+      (* b (j-expt b (- n 1)))))
 
+(define (j-expt-iter b n)
+  (define (j-expt-helper b counter total)
+    (if (= counter 0)
+        total
+        (j-expt-helper b (- counter 1) (* total b))))
+  (j-expt-helper b n 1))
+
+(define (fast-expt b n)
+  (define (j-square a)
+    (* a a))
+  (cond ((= n 0) 1)
+        ((even? n) (j-square (fast-expt b (/ n 2))))
+        (else (* b (fast-expt b (- n 1))))))
+
+;;Ex 1.16 Create an iterative exponentiation process that is also
+;;fast, by using the successive squaring technique.
+(define (fast-expt-iter b n)
+  (define (fast-expt-helper b counter total)
+    (cond ((= counter 0) total)
+          ((odd? counter) (fast-expt-helper b (- counter 1) (* total b)))
+          (else (fast-expt-helper (* b b) (/ counter 2) total))))
+  (fast-expt-helper b n 1))
+
+;;Ex 1.17
+(define (fast-mult a b)
+  (define (j-double a)
+    (+ a a))
+  (define (j-halve a)
+    (/ a 2))
+  (cond ((= b 0) 0)
+        ((even? b) (j-double (fast-mult a (j-halve b))))
+        (else (+ a (fast-mult a (- b 1))))))
+;;Ex 1.18
+;;Create an iterative version of fast-mult that uses successive
+;;adding, doubling, and halving.
+(define (fast-mult-iter a b)
+  (define (j-double a)
+    (+ a a))
+  (define (j-halve a)
+    (/ a 2))
+  (define (fast-mult-helper a b total)
+    (cond ((= b 0) total)
+          ((odd? b) (fast-mult-helper a (- b 1) (+ total a)))
+          (else (fast-mult-helper (j-double a) (j-halve b) total))))
+  (fast-mult-helper a b 0))
+
+;;Ex 1.19
+
+
+;;;;;;;;;;;;;;;; Section 1.2.5 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (j-gcd a b)
+  (if (= b 0)
+      a
+      (j-gcd b (modulo a b))))
+
+
+;;;;;;;;;;;;;;;; Section 1.2.6 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;; CHAPTER 2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define (add-rat x y)
