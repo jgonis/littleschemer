@@ -2,14 +2,75 @@
 ;;Jeff Gonis
 ;;;;;;;;;;;;;;;CHAPTER 1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Exercise 1.3
-(define (j-square x)
-  (* x x))
+,config (define-structure sicp (export j-square
+                                       ex13
+                                       sqrt-iter
+                                       improve-guess
+                                       average
+                                       good-enough?
+                                       j-sqrt
+                                       good-enough-change?
+                                       sqrt-iter-change
+                                       j-sqrt-change
+                                       j-cube-root-iter
+                                       improve-cube-guess
+                                       j-cube-root
+                                       j-factorial
+                                       j-factorial-iterative
+                                       fib
+                                       iterative-fib
+                                       count-change
+                                       ex111
+                                       ex111-iterative
+                                       pascal-triangle
+                                       j-expt
+                                       j-expt-iter
+                                       fast-expt
+                                       fast-expt-iter
+                                       fast-mult
+                                       fast-mult-iter
+                                       j-gcd
+                                       smallest-divisor
+                                       prime?
+                                       add-rat
+                                       sub-rat
+                                       mul-rat
+                                       div-rat
+                                       equal-rat?
+                                       make-rat
+                                       numer
+                                       denom
+                                       print-rat
+                                       reduced-make-rat
+                                       improved-reduced-make-rat
+                                       make-segment
+                                       start-segment
+                                       end-segment
+                                       make-point
+                                       x-point
+                                       y-point
+                                       print-point
+                                       midpoint-segment
+                                       make-rect
+                                       bottom-left
+                                       top-right
+                                       rect-perimeter
+                                       rect-area
+                                       alt-make-rect
+                                       alt-bottom-left
+                                       rect-height
+                                       rect-width
+                                       alt-top-right)
+  (open scheme srfi-27)
+  (begin    
+    (define (j-square x)
+      (* x x))
 
-(define (ex13 x y z)
-  (cond ((< x y z) (+ (j-square y) (j-square z)))
-        ((< y x z) (+ (j-square x) (j-square z)))
-        ((< z x y) (+ (j-square x) (j-square y)))
-        (else (+ (j-square x) (j-square y)))))
+    (define (ex13 x y z)
+      (cond ((< x y z) (+ (j-square y) (j-square z)))
+            ((< y x z) (+ (j-square x) (j-square z)))
+            ((< z x y) (+ (j-square x) (j-square y)))
+            (else (+ (j-square x) (j-square y)))))
 
 ;;Exercise 14
 ;;An applicative-order interpreter will try to evaluate the argument
@@ -227,6 +288,19 @@
 
 
 ;;;;;;;;;;;;;;;; Section 1.2.6 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (smallest-divisor n)
+  (define (square n)
+    (* n n))
+  (define (divides? a b)
+    (= (modulo b a) 0))
+  (define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+          ((divides? test-divisor n) test-divisor)
+          (else (find-divisor n (+ test-divisor 1)))))
+  (find-divisor n 2))
+
+(define (prime? n)
+  (= (smallest-divisor n) n))
 
 ;;;;;;;;;;;;;;;;;;;;;; CHAPTER 2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define (add-rat x y)
@@ -343,5 +417,5 @@
 (define (alt-top-right rect)
   (make-point (+ (rect-width rect) (x-point (bottom-left rect)))
               (+ (rect-height rect) (y-point (bottom-left rect)))))
-
+))
 
