@@ -2,75 +2,17 @@
 ;;Jeff Gonis
 ;;;;;;;;;;;;;;;CHAPTER 1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Exercise 1.3
-,config (define-structure sicp (export j-square
-                                       ex13
-                                       sqrt-iter
-                                       improve-guess
-                                       average
-                                       good-enough?
-                                       j-sqrt
-                                       good-enough-change?
-                                       sqrt-iter-change
-                                       j-sqrt-change
-                                       j-cube-root-iter
-                                       improve-cube-guess
-                                       j-cube-root
-                                       j-factorial
-                                       j-factorial-iterative
-                                       fib
-                                       iterative-fib
-                                       count-change
-                                       ex111
-                                       ex111-iterative
-                                       pascal-triangle
-                                       j-expt
-                                       j-expt-iter
-                                       fast-expt
-                                       fast-expt-iter
-                                       fast-mult
-                                       fast-mult-iter
-                                       j-gcd
-                                       smallest-divisor
-                                       prime?
-                                       add-rat
-                                       sub-rat
-                                       mul-rat
-                                       div-rat
-                                       equal-rat?
-                                       make-rat
-                                       numer
-                                       denom
-                                       print-rat
-                                       reduced-make-rat
-                                       improved-reduced-make-rat
-                                       make-segment
-                                       start-segment
-                                       end-segment
-                                       make-point
-                                       x-point
-                                       y-point
-                                       print-point
-                                       midpoint-segment
-                                       make-rect
-                                       bottom-left
-                                       top-right
-                                       rect-perimeter
-                                       rect-area
-                                       alt-make-rect
-                                       alt-bottom-left
-                                       rect-height
-                                       rect-width
-                                       alt-top-right)
-  (open scheme srfi-27)
-  (begin    
-    (define (j-square x)
-      (* x x))
+(import (rnrs))
+(import (srfi :27 random-bits))
+(import (larceny benchmarking))
+(define (j-square x)
+  (* x x))
 
-    (define (ex13 x y z)
-      (cond ((< x y z) (+ (j-square y) (j-square z)))
-            ((< y x z) (+ (j-square x) (j-square z)))
-            ((< z x y) (+ (j-square x) (j-square y)))
-            (else (+ (j-square x) (j-square y)))))
+(define (ex13 x y z)
+  (cond ((< x y z) (+ (j-square y) (j-square z)))
+        ((< y x z) (+ (j-square x) (j-square z)))
+        ((< z x y) (+ (j-square x) (j-square y)))
+        (else (+ (j-square x) (j-square y)))))
 
 ;;Exercise 14
 ;;An applicative-order interpreter will try to evaluate the argument
@@ -284,7 +226,7 @@
 (define (j-gcd a b)
   (if (= b 0)
       a
-      (j-gcd b (modulo a b))))
+      (j-gcd b (mod a b))))
 
 
 ;;;;;;;;;;;;;;;; Section 1.2.6 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -292,7 +234,7 @@
   (define (square n)
     (* n n))
   (define (divides? a b)
-    (= (modulo b a) 0))
+    (= (mod b a) 0))
   (define (find-divisor n test-divisor)
     (cond ((> (square test-divisor) n) n)
           ((divides? test-divisor n) test-divisor)
@@ -301,6 +243,121 @@
 
 (define (prime? n)
   (= (smallest-divisor n) n))
+
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (mod (j-square (expmod base (/ exp 2) m))
+                 m))
+        (else (mod (* base (expmod base (- exp 1) m))
+                      m))))
+
+(define (fermat-test n)
+  (define  (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random-integer (- n 1)))))
+
+(define (fast-prime? n times)
+  (cond ((= 0 times) #t)
+        ((fermat-test n) (fast-prime? n (- times 1)))
+        (else #f)))
+
+;;Ex 1.21
+;;Smallest divisor of 199 = 199
+;;Smallest divisor of 1999 = 1999
+;;Smallest divisor of 19999 = 7
+
+;;Ex 1.22
+(define (search-for-primes start-at)
+  (define (search-for-primes-helper current found-primes)
+    (cond ((> (length found-primes) 2) found-primes)
+          (else (cond ((prime? current)
+                       (search-for-primes-helper
+                        (+ current 1)
+                        (cons current found-primes)))
+                       (else (search-for-primes-helper
+                              (+ current 1) found-primes))))))
+  (search-for-primes-helper start-at '()))
+
+;;Time to test for primes running in larceny on a 2.9 Ghz i7
+;;searching for primes greater than 1000000000: 161 ms
+;;searching for primes greater than 10000000000: 2737 ms
+;;searching for primes greater than 100000000000:  12273 ms
+;;searching for primes greater than 1000000000000:  41040 ms
+;;searching for primes greater than 10000000000000:  162743 ms
+;;This does not exactly increase by sqrt(10) but at the higher numbers
+;;it does, going up by roughly 3-4x with each magnitude of 10 added,
+;;which makes sense, as sqrt(10) is ~3.16
+
+;;Ex 1.23
+(define (faster-smallest-divisor n)
+  (define (square n)
+    (* n n))
+  (define (next n)
+    (cond ((= n 2) 3)
+          (else (+ n 2))))
+  (define (divides? a b)
+    (= (mod b a) 0))
+  (define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+          ((divides? test-divisor n) test-divisor)
+          (else (find-divisor n (next test-divisor)))))
+  (find-divisor n 2))
+
+(define (better-prime? n)
+  (= (faster-smallest-divisor n) n))
+
+(define (better-search-for-primes start-at)
+  (define (search-for-primes-helper current found-primes)
+    (cond ((> (length found-primes) 2) found-primes)
+          (else (cond ((better-prime? current)
+                       (search-for-primes-helper
+                        (+ current 1)
+                        (cons current found-primes)))
+                       (else (search-for-primes-helper
+                              (+ current 1) found-primes))))))
+  (search-for-primes-helper start-at '()))
+
+;;Time to test for primes running in larceny on a 2.9 Ghz i7
+;;searching for primes greater than 1000000000: 80 ms
+;;searching for primes greater than 10000000000: 1402 ms
+;;searching for primes greater than 100000000000:  6453 ms
+;;searching for primes greater than 1000000000000:  20623 ms
+;;searching for primes greater than 10000000000000:  87359 ms
+;;Using the modified smallest-divisor test we see times that are
+;;almost exactly 1/2 of the previous times, which is what we expected
+;;to see, as 1/2 as many divisions are being performed.
+
+;;Exercise 1.24
+(define (fermat-search-for-primes start-at)
+  (define (search-for-primes-helper current found-primes)
+    (cond ((> (length found-primes) 2) found-primes)
+          (else (cond ((fast-prime? current 16)
+                       (search-for-primes-helper
+                        (+ current 1)
+                        (cons current found-primes)))
+                       (else (search-for-primes-helper
+                              (+ current 1) found-primes))))))
+  (search-for-primes-helper start-at '()))
+
+;;Time to test for primes running in larceny on a 2.9 Ghz i7
+;;searching for primes greater than 1000000000: 47 ms
+;;searching for primes greater than 10000000000: 122 ms
+;;searching for primes greater than 100000000000:  131 ms
+;;searching for primes greater than 1000000000000:  138 ms
+;;searching for primes greater than 10000000000000:  215 ms
+
+
+;;;;;;;;;;;;;;;;;;;;;;; SECTION 1.3 ;;;;;;;;;;;;;;;;;;;;;;;
+(define (sum-integers a b)
+  (cond ((> a b) 0)
+        (else (+ a (sum-integers (+ a 1) b)))))
+
+(define (sum-cubes a b)
+  (define (cube n)
+    (* n n n))
+  (cond ((> a b) 0)
+        (else (+ (cube a) (sum-cubes (+ a 1) b)))))
 
 ;;;;;;;;;;;;;;;;;;;;;; CHAPTER 2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define (add-rat x y)
@@ -417,5 +474,8 @@
 (define (alt-top-right rect)
   (make-point (+ (rect-width rect) (x-point (bottom-left rect)))
               (+ (rect-height rect) (y-point (bottom-left rect)))))
-))
+
+
+
+;;;;;;;;;;;;;;;;;; Section 2.1.3 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
