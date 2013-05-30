@@ -359,6 +359,37 @@
   (cond ((> a b) 0)
         (else (+ (cube a) (sum-cubes (+ a 1) b)))))
 
+(define (pi-sum a b)
+  (cond ((> a b) 0)
+        (else (+ (/ 1.0 (* a (+ a 2))) (pi-sum (+ a 4) b)))))
+
+(define (sum term a next b)
+  (cond ((> a b) 0)
+        (else (+ (term a) (sum term (next a) next b)))))
+
+(define (higher-order-sum-cubes a b)
+  (define (inc a) (+ a 1))
+  (define (cube a) (* a a a))
+  (sum cube a inc b))
+
+(define (higher-order-sum-integers a b)
+  (define (identity x) x)
+  (define (inc x) (+ x 1))
+  (sum identity a inc b))
+
+(define (higher-order-pi-sum a b)
+  (define (pi-term x)
+    (/ 1.0 (* x (+ x 2))))
+  (define (pi-next x) (+ x 4))
+  (sum pi-term a pi-next b))
+
+(define (integral f a b dx)
+  (define (add-dx x) (+ x dx))
+  (* (sum f (+ a (/ dx 2.0)) add-dx b) dx))
+
+;;Ex 1.29
+
+
 ;;;;;;;;;;;;;;;;;;;;;; CHAPTER 2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define (add-rat x y)
   (reduced-make-rat (+ (* (numer x) (denom y))
