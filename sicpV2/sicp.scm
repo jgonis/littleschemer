@@ -348,6 +348,7 @@
 ;;searching for primes greater than 10000000000000:  215 ms
 
 
+;;Ex 1.25
 ;;;;;;;;;;;;;;;;;;;;;;; SECTION 1.3 ;;;;;;;;;;;;;;;;;;;;;;;
 (define (sum-integers a b)
   (cond ((> a b) 0)
