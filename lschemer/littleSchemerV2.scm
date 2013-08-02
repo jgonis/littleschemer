@@ -18,5 +18,11 @@
 (define rember
   (lambda (a lat)
     (cond ((null? lat) (quote ()))
-          (else (cond ((eq? a (car lat)) (cdr lat))
-                      (else (rember a (cdr lat))))))))
+          ((eq? a (car lat)) (cdr lat))
+          (else (cons (car lat) (rember a (cdr lat)))))))
+
+(define firsts
+  (lambda (l)
+    (cond ((null? l) (quote ()))
+          (else (cons (car (car l)) (firsts (cdr l)))))))
+
