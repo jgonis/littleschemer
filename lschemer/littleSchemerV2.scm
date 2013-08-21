@@ -224,3 +224,57 @@
           ((atom? (car l)) (cond ((eqan? a (car l))
                                   (j-+ 1 (occur* a (cdr l))))))
           (else (j-+ (occur* a (car l)) (occur* a (cdr l)))))))
+
+(define subst*
+  (lambda (new old l)
+    (cond ((null? l) (quote ()))
+          ((atom? (car l))
+           (cond ((eq? (car l) old)
+                  (cons new (subst* new old (cdr l))))
+                 (else (cons (car l) (subst* new old (cdr l))))))
+          (else (cons (subst* new old (car l))
+                      (subst* new old (cdr l)))))))
+
+(define insertL*
+  (lambda (new old l)
+    (cond ((null? l) (quote ()))
+          ((atom? (car l))
+           (cond ((eq? (car l) old)
+                  (cons new (cons old (insertL* new old (cdr l)))))
+                 (else (cons (car l) (insertL* new old (cdr l))))))
+          (else (cons (insertL* new old (car l))
+                      (insertL* new old (cdr l)))))))
+(define member*
+  (lambda (a l)
+    (cond ((null? l) #f)
+          ((atom? (car l))
+           (cond ((eq? a (car l)) #t)
+                 (else (member* a (cdr l)))))
+          (else (or (member* a (car l)) (member* a (cdr l)))))))
+
+(define leftmost
+  (lambda (l)
+    (cond ((atom? (car l)) (car l))
+          (else (leftmost (car l))))))
+
+(define eqlist?
+  (lambda (l1 l2)
+    (cond ((and (null? l1) (null? l2)) #t)
+          ((or (null? l1) (null? l2)) #f)
+          (else (and (j-equal? (car l1) (car l2))
+                     (eqlist? (cdr l1) (cdr l2)))))))
+
+(define j-equal?
+  (lambda (sexp1 sexp2)
+  (cond ((and (atom? sexp1) (atom? sexp2)) (eqan? sexp1 sexp2))
+        ((or (atom? sexp1) (atom? sexp2)) #f)
+        (else (eqlist? sexp1 sexp2)))))
+
+(define rember
+  (lambda (s l)
+    (cond ((null? l) (quote ()))
+          ((j-equal? (car l) s) (cdr l))
+          (else (cons (car l)
+                      (rember s (cdr l)))))))
+
+
