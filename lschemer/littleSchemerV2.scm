@@ -278,3 +278,57 @@
                       (rember s (cdr l)))))))
 
 
+;;Chapter 6
+
+(define numbered?
+  (lambda (aexp)
+    (cond ((atom? aexp) (number? aexp))
+          ((and (numbered? (car aexp)) (numbered? (car (cdr (cdr aexp))))
+                (or (j-equal? (car (cdr aexp)) (quote +))
+                    (j-equal? (car (cdr aexp)) (quote *))
+                    (j-equal? (car (cdr aexp)) (quote ^)))) #t)
+          (else #f))))
+
+(define value
+  (lambda (nexp)
+    (cond ((and (atom? nexp) (number? nexp)) nexp)
+          ((j-equal? (car (cdr nexp)) (quote +))
+           (+ (value (car nexp)) (value (car (cdr (cdr nexp))))))
+          ((j-equal? (car (cdr nexp)) (quote *))
+           (* (value (car nexp)) (value (car (cdr (cdr nexp))))))
+          ((j-equal? (car (cdr nexp)) (quote ^))
+           (^ (value (car nexp)) (value (car (cdr (cdr nexp))))))
+          (else #f))))
+
+(define prefix-value
+  (lambda (nexp)
+    (cond ((and (atom? nexp) (number? nexp)) nexp)
+          ((j-equal? (car nexp) (quote +))
+           (+ (prefix-value (car (cdr nexp)))
+              (prefix-value (car (cdr (cdr nexp))))))
+          ((j-equal? (car nexp) (quote *))
+           (* (prefix-value (car (cdr nexp)))
+              (prefix-value (car (cdr (cdr nexp))))))
+          ((j-equal? (car nexp) (quote ^))
+           (^ (prefix-value (car (cdr nexp)))
+              (prefix-value (car (cdr (cdr nexp))))))
+          (else #f))))
+
+(define sero?
+  (lambda (n)
+    (null? n)))
+
+(define edd1
+  (lambda (n)
+    (cons '() n)))
+
+(define zub1
+  (lambda (n)
+    (cdr n)))
+
+(define edd
+  (lambda (x y)
+    (cond ((sero? y) x)
+          (else (edd (edd1 x) (zub1 y))))))
+
+;;Chapter 7 Friends and Relations
