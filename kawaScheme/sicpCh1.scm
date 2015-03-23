@@ -1,0 +1,5 @@
+(define (time-length functionToTime)
+  (let ((start (current-jiffy)))
+    (functionToTime)
+    (/ (- (current-jiffy) start)
+       (jiffies-per-second))))
