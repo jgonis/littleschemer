@@ -16,7 +16,7 @@
           (scheme complex)
           (scheme inexact)
           (scheme file))
-  (begin))))))))
+  (begin))
 
 (import (sicp ch1)
         (sicp timing))
