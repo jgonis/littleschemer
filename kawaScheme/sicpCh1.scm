@@ -1,22 +1,14 @@
-(define-library (sicp timing)
-  (export time-length)
-  (import (scheme base)
-          (scheme time)) 
-   (begin 
-     (define (time-length functionToTime)
-       (let ((start (current-jiffy)))
-         (functionToTime)
-         (inexact (/ (- (current-jiffy) start)
-                     (jiffies-per-second)))))))
-
+(include "timing.scm")
 (define-library (sicp ch1)
-  (export )
-  (import (scheme base)
+  (export square)
+  (import (except (scheme base) square)
           (scheme char)
           (scheme complex)
           (scheme inexact)
           (scheme file))
-  (begin))
+  (begin
+    (define (square n)
+      (* n n))))
 
 (import (sicp ch1)
         (sicp timing))

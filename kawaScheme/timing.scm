@@ -1,0 +1,10 @@
+(define-library (sicp timing)
+  (export time-length)
+  (import (scheme base)
+          (scheme time)) 
+   (begin 
+     (define (time-length functionToTime)
+       (let ((start (current-jiffy)))
+         (functionToTime)
+         (inexact (/ (- (current-jiffy) start)
+                     (jiffies-per-second)))))))
