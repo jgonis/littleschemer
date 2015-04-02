@@ -10,5 +10,16 @@
     (define (square n)
       (* n n))))
 
+(define-library (sicp ch1 tests)
+  (export ex13test)
+  (import (scheme base)
+          (prefix (sicp ch1) sicp-)
+          (srfi 64))
+  (begin
+    (define (ex13test)
+      (test-begin "test")
+      (test-end "test"))))
+
 (import (sicp ch1)
-        (sicp timing))
+        (sicp timing)
+        (sicp ch1 tests))
